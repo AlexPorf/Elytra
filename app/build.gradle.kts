@@ -1,3 +1,5 @@
+import com.android.build.api.variant.BuildConfigField
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -42,6 +44,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -52,6 +55,21 @@ android {
         }
     }
 }
+
+
+androidComponents {
+    val key = property("apikey")?.toString() ?: error(
+        "You should add apikey into gradle.properties"
+    )
+
+    onVariants { variant ->
+        variant.buildConfigFields.put(
+            "GAME_API_KEY",
+            BuildConfigField("String", "\"$key\"", "API key for accessing the sevice")
+        )
+    }
+}
+
 
 dependencies {
 
@@ -74,6 +92,7 @@ dependencies {
 
     implementation(libs.dagger.core)
     ksp(libs.dagger.compiler)
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
 
     implementation(libs.glide.compose)
     implementation(libs.retrofit.core)
